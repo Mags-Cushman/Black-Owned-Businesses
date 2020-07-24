@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Art </title>
+   <style>
+    body {
+      background-color: hsla(89, 43%, 51%, 0.3)
+    }
+
+    #menubar {
+      display: flex;
+    }
+
+    .filter {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .art_entry h1 {
+      width: calc(100vw - 50px - 200px);
+    }
+
+    .filter span {
+      display: block;
+      text-align: center;
+    }
+
+    .filter + .filter {
+      margin-left: .5em;
+    }
+
+    .art_entry {
+      position: relative;
+    }
+
+    .art_entry img {
+      position: absolute;
+      right: 50px;
+      top: 10px;
+      max-height: 120px;
+    }
+  </style>
+</head>
+<div id="menubar">
+		<select id="price_type_filter">
+			<option value="Low">Low prices</option>
+			<option value="High">High prices</option>
+		</select>
+      <!--I changed the options into pronouns--> 
+    <select id="co_owned_filter">
+			<option value="couple">Co-owned</option>
+			<option value="family">Family-Owned</option>
+      <option value="she/her">Woman-Owned</option>
+      <option value="he/him">Man-Owned</option>
+      <option value="they/them">Queer-Owned</option>
+		</select>
+	</div>
+	<div id="art_list">
+    <!-- Where the businesses are listed, starts out empty -->
+	</div>
+	<script src="art.js"></script>
+	<script type="text/javascript">
+    
+
+    let filters = {
+      price_type: null,
+      co_owned: null
+    };
+
+    // Get references to filter drop down elements, and businessList element
+		let priceTypeFilter = document.querySelector("#price_type_filter");
+		let coOwnedFilter = document.querySelector("#co_owned_filter");
+		let businessesList = document.querySelector("#businesses_list");
+
+    // Listen for a "change" event
+		priceTypeFilter.addEventListener("change", function() {
+      filters.price_type = this.value;
+      filterElements();
+		});
+
+    coOwnedFilter.addEventListener("change", function() {
+			filters.co_owned = this.value;
+      filterElements();
+		});
+
+    function filterElements() {
+      let filteredBusinesses = art.filter(function(business) {
+        // If (the filter has been changed by the user)
+        if (filters.co_owned !== null) {
+          // Check that the business matches our filter.
+          return art.co_owned == filters.co_owned;
+        }
+        // Else, don't filter at all; always return true
+        else {
+          return true;
+        }
+			}).filter(function(business) {
+        if (filters.price_type !== null) {
+          return art.price_type == filters.price_type;
+        } else {
+          return true;
+        }
+      });
+
+      makeElements(filteredArt);
+    }
+
+    // Make the list of elements to show the different businesses.
+    // The "listOfBusinesses" argument
+		function makeElements(listOfArt) {
+      // Clear out the list first
+			ArtList.innerHTML = "";
+
+      // Iterate over the list of business you passed in.
+			for (let i = 0; i < listOfArt.length; i++) {
+        // Get the current business we're focusing on
+				let Art = listOfArt[i];
+        // Make a <div> to add to the list
+				let entry = document.createElement("div");
+        // Set the innerHTML of the div to all follow the same format
+				entry.innerHTML = `<h1>${art.name}</h1><span>Price Type: ${business.price_type}</span>,Co Owned<span>Owned by : ${art.co_owned}</span>`;
+        // Append the <div>.
+				artList.appendChild(entry);
+			}
+		}
+
+		makeElements(art);
+	</script>
+</body>
+</html>

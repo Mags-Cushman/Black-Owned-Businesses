@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Makeup </title>
+  <style>
+    body {
+      background-color: hsla(89, 43%, 51%, 0.3)
+    }
+
+    #menubar {
+      display: flex;
+    }
+
+    .filter {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .business_entry h1 {
+      width: calc(100vw - 50px - 200px);
+    }
+
+    .filter span {
+      display: block;
+      text-align: center;
+    }
+
+    .filter + .filter {
+      margin-left: .5em;
+    }
+
+    .business_entry {
+      position: relative;
+    }
+
+    .business_entry img {
+      position: absolute;
+      right: 50px;
+      top: 10px;
+      max-height: 120px;
+    }
+  </style>
+</head>
+<body>
+	<div id="menubar">
+    <div class="filter">
+      <span>Price Range</span>
+      <select id="price_range_filter">
+        <option value="Low">Low prices</option>
+        <option value="High">High prices</option>
+      </select>
+    </div>
+    <div class="filter">
+      <span>Owner/Founder:</span>
+      <select id="co_owned_filter">
+        <option value="Co-owned">Co-owned</option>
+        <option value="Family">Family</option>
+        <option value="Woman">Woman</option>
+        <option value="Man">Man</option>
+      </select>
+    </div>
+    <div class="filter">
+      <span>Location:</span>
+      <select id="location_filter">
+        <option value="London">London</option>
+        <option value="New York">New York </option>
+        <option value="USA">USA</option>
+        <option value="USA">USA</option>
+      </select>
+    </div>
+	</div>
+	<div id="businesses_list">
+    <!-- Where the businesses are listed, starts out empty -->
+	</div>
+	<script src="Makeup/Makeup.js"></script>
+	<script type="text/javascript">
+    // Filteres the entire list of businesses to only focus/show "Small Businesses" type
+		businesses = businesses.filter(function(business) {
+			return business.type == "Makeup";
+		});
+
+    let filters = {
+      price_range:null,
+      owned_by: null,
+      location: null
+    };
+
+    // Get references to filter drop down elements, and businessList element
+		let priceRangeFilter = document.querySelector("#price_range_filter");
+		let ownedByFilter = document.querySelector("#co_owned_filter");
+		let businessesList = document.querySelector("#businesses_list");
+    let locationFilter = document.querySelector("#location_filter");
+
+    // Listen for a "change" event
+		priceRangeFilter.addEventListener("change", function() {
+      filters.price_range = this.value;
+      filterElements();
+		});
+
+    ownedByFilter.addEventListener("change", function() {
+			filters.co_owned = this.value;
+      filterElements();
+		});
+
+    locationFilter.addEventListener("change", function() {
+			filters.location = this.value;
+      filterElements();
+    });
+
+    function filterElements() {
+      let filteredBusinesses = businesses.filter(function(business) {
+        // If (the filter has been changed by the user)
+        if (filters.co_owned !== null) {
+          // Check that the business matches our filter.
+          return business.co_owned == filters.co_owned;
+        }
+        // Else, don't filter at all; always return true
+        else {
+          return true;
+        }
+			}).filter(function(business) {
+        if (filters.price_range !== null) {
+          return business.price_type == filters.price_type;
+        } else {
+          return true;
+        }
+      }).filter(function(business) {
+        if (filters.location !== null) {
+          return business.location == filters.location;
+        } else {
+          return true;
+        }
+      });
+
+      makeElements(filteredBusinesses);
+    }
+
+    // Make the list of elements to show the different businesses.
+    // The "listOfBusinesses" argument
+		function makeElements(listOfBusinesses) {
+      // Clear out the list first
+			businessesList.innerHTML = "";
+
+      // Iterate over the list of business you passed in.
+			for (let i = 0; i < listOfBusinesses.length; i++) {
+        // Get the current business we're focusing on
+				let business = listOfBusinesses[i];
+        // Make a <div> to add to the list
+				let entry = document.createElement("div");
+        // Give the entry a "business_entry" class
+        entry.classList.add("business_entry");
+        // Set the innerHTML of the div to all follow the same format
+				entry.innerHTML = `<img src="${business.picture}"/><h1>${business.name}</h1><span>Price Type: ${business.price_type}</span><br><span>Location: ${business.location}</span><br><span>Owned by : ${business.co_owned}</span><br><a href="${business.link}">Website</a>`;
+        // Append the <div>.
+				businessesList.appendChild(entry);
+			}
+		}
+
+		makeElements(businesses);
+	</script>
+</body>
+</html>
